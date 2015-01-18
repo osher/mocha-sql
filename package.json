@@ -21,8 +21,8 @@
     "mocha": "~1.20.1"
   },
   "license": "propriatry",
-  "repository": "hg+http://hg.osg-worlds.com/TBD!!!",
+  "repository": "https://github.com/osher/mocha-sql",
   "publishConfig": {
-    "registry": "http://npm.osg-worlds.com/"
+    "registry": "http://registry.npmjs.org"
   }
 }
