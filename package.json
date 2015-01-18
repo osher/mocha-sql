@@ -1,0 +1,28 @@
+{
+  "name": "mocha-sql",
+  "version": "0.0.0",
+  "description": "",
+  "main": "lib",
+  "bin": {
+    "db-apply": "bin/db-apply"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "commander": "~2.6.0",
+    "yargs": "~1.3.3",
+    "js-yaml": "~3.2.5",
+    "pg": "~4.2.0",
+    "async": "~0.9.0"
+  },
+  "devDependencies": {
+    "mocha-ui-exports": "~0.2.2",
+    "mocha": "~1.20.1"
+  },
+  "license": "propriatry",
+  "repository": "hg+http://hg.osg-worlds.com/TBD!!!",
+  "publishConfig": {
+    "registry": "http://npm.osg-worlds.com/"
+  }
+}

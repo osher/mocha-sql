@@ -1,0 +1,3 @@
+--ui mocha-ui-exports
+--require osg-logger/apply-test-mode
+--reporter spec
