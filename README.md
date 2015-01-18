@@ -3,12 +3,12 @@ mocha-sql
 
 Goals:
 ------
-1 - simple readable suite files, aiming DBA & developers
-2 - let them describe not only db-init/db-migrate/db-rollback flows, 
+1. simple readable suite files, aiming DBA & developers
+1. let them describe not only db-init/db-migrate/db-rollback flows, 
     but also support them to describe scanity tests for their moves.
-3 - allow running the suites inside CI flows
-4 - allow running the suites on production, the same way they passed in CI
-5 - take advantage of Mocha's 
+1. allow running the suites inside CI flows
+1. allow running the suites on production, the same way they passed in CI
+1. take advantage of Mocha's 
    * well-structured waterfall
    * well handled startup / teardown hooks
    * good looking `spec` reporter
