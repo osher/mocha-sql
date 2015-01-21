@@ -39,12 +39,12 @@ function run_mocha(e) {
         : "mocha"
       , f
       ;
-    if (args.u) switches.push("--user", args.u);
-    if (args.w) switches.push("--password", args.w);
+    if (args.U) switches.push("--user", args.U);
+    if (args.W) switches.push("--password", args.W);
     if (args.d) switches.push("--database", args.d);
 
     console.log("executing...\n=========================================");
-    console.log(cmd, switches);
+    console.log("%s %s", cmd.trim(), switches[0], switches.slice(1).map(function(w) { return (w + "                 ").substr(0,18) }).join("").replace(/--/g, "\\\n\t--"));
     console.log("=========================================");
 
     f = spawn(cmd, switches, { customFds: [0,1,2] });
