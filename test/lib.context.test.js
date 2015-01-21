@@ -106,14 +106,18 @@ module.exports =
         { beforeAll: 
           function() {
               ctx.config( 
-                { database: "testdb" } 
+                { database: "testdb" 
+                , host    : "localhost"
+                , port    : 5432
+                } 
               , { }
               )
           }
         , "should initiate this.target with default connection settings": 
           function() {
-              ctx.should.have.property("target"
-              , { host    : "localhost"
+              ctx.should.have.property("target");
+              ctx.target.should.eql(
+                { host    : "localhost"
                 , port    : 5432
                 , user    : "postgres"
                 , password: null
@@ -123,8 +127,9 @@ module.exports =
           }
         , "should initiate this.ciAdmin with CI user settings" : 
           function() {
-              ctx.should.have.property("ciAdmin"
-              , { host    : "localhost"
+              ctx.should.have.property("ciAdmin");
+              ctx.ciAdmin.should.eql(
+                { host    : "localhost"
                 , port    : 5432
                 , user    : "postgres"
                 , password: null

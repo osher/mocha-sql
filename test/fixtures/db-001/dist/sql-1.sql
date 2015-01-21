@@ -1,0 +1,1 @@
+CREATE TABLE testtable(id integer, name varchar(32));

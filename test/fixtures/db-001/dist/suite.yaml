@@ -1,0 +1,11 @@
+meta: 
+  title  : init DB 001 
+  base   : ./dist/init/sql
+
+#=======================================
+database init should work with no errors :
+  execution: 
+    - title     : create some tables
+      sql-file  : ./sql-1.sql
+    - title     : populate built-in data
+      sql-file  : ./sql-2.sql

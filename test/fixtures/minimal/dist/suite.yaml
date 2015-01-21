@@ -1,0 +1,8 @@
+meta: 
+  title  : minimal
+
+#=======================================
+scenario-1 :
+  section-1: 
+    - title     : sql-1
+      sql       : SELECT NOW();
