@@ -91,18 +91,27 @@ module.exports =
               );              
           }
         }
-      , "when used with no empty args" : 
-        { "should throw a friendly error": 
+      , "when used with empty args" : 
+        { "should not fail": 
           function() {
-              (function() {
-                  ctx.config( 
-                    { } 
-                  , { }
-                  )
-              }).should.throw
+              sut.clear();
+              ctx = sut.init()
+              ctx.config( {}, {} )
+          }
+        , "should leave target.user empty - so it would be overrun in test context" : 
+          function() {
+              Should(ctx.target.user).not.be.ok;
+          }
+        , "should leave target.password empty - so it would be overrun in test context" : 
+          function() {
+              Should(ctx.target.password).not.be.ok;
+          }
+        , "should leave target.database empty - so it would be overrun in test context" : 
+          function() {
+              Should(ctx.target.database).not.be.ok;
           }
         }
-      , "when used with minimal args" : 
+      , "when used with partial args" : 
         { beforeAll: 
           function() {
               ctx.config( 
@@ -119,7 +128,7 @@ module.exports =
               ctx.target.should.eql(
                 { host    : "localhost"
                 , port    : 5432
-                , user    : "postgres"
+                , user    : undefined
                 , password: null
                 , database: "testdb"
                 }
