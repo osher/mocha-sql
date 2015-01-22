@@ -78,7 +78,7 @@ module.exports =
                     { beforeAll: function() {}
                     , "scenario-1:" : 
                       { "section-1:" : 
-                        { "sql-1" : function sql_step() {}
+                        { "sql-1" : function() {}
                         } 
                       }
                     , afterAll: function() {}
@@ -87,7 +87,7 @@ module.exports =
                     { beforeAll: function() {}
                     , "scenario-1:" : 
                       { "section-1:" : 
-                        { "sql-1" : function sql_step() {}
+                        { "sql-1" : function() {}
                         } 
                       }
                     , afterAll: function() {}
