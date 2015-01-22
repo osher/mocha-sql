@@ -39,18 +39,29 @@ module.exports =
     }
   , "when provided with a valid 'sql' step" : 
     block(function() {
-        var fStep
+        var step = 
+            { sql : "SELECT 1;" 
+            , expect : 
+              { rows : 
+                [ [1,"one"] 
+                , [2,"two"]
+                ]
+              }
+            } 
           , ctx = new Context({})
-          , err = new Error("wanted error");
+          , expectedErr = new Error("wanted error")
+          , unexpectedErr = new Error("error unexpected")
+          , yieldedErr 
+          , fStep
           ;
-        context.client = 
+        ctx.client = 
           { query:
             function(sql, done) { 
                 switch(sql) {
                   case 'fail-expected': 
-                    return done(err);
+                    return done(expectedErr);
                   case 'fail-unexpected':
-                    return done(new Error("error unexpected"));
+                    return done(unexpectedErr);
                   case 'result-unexpected' :
                     return done(
                       null
@@ -75,16 +86,7 @@ module.exports =
         return {
           "should not fail" : 
           function() {
-              fStep = sut(
-                { sql : "SELECT 1;" 
-                , expect : 
-                  { rows : 
-                    [ [1,"one"] 
-                    , [2,"two"]
-                    ]
-                  }
-                } 
-              );
+              fStep = sut(step, ctx);
           }
         , "should return an async step function" : 
           function() {
@@ -94,10 +96,130 @@ module.exports =
               fStep.length.should.eql(1);
           }
         , "when using the step" : 
-          { "and step returns error" :
-            null
-          , "and step returns recordset that does not match" :
-            null
+          { "and step yields error when no error is expected" :
+            { beforeAll: 
+              function() {
+                  step.sql = "fail-unexpected"
+              }
+            , "should yield the error" :
+              function(done) {
+                  fStep(function(e) {
+                      Should.exist(e);
+                      e.should.equal(unexpectedErr)
+                      done()
+                  })
+              }
+            , "should keep a reference to the error on the ctx" :
+              function() {
+                  ctx.should.have.property("error", unexpectedErr);
+              }
+            , afterAll: 
+              function() {
+                  delete ctx.error;
+              }
+            }
+          , "and step yields no error when an error is expected" : 
+            { beforeAll: 
+              function() {
+                  step.sql = "pass";
+                  step["expect-error"] = "some error";
+              }
+            , "should yield a friendly error" :
+              function(done) {
+                  fStep(function(e) {
+                      Should.exist(e);
+                      e.message.should.match(/Expected error did not occur/);
+                      done()
+                  })
+              }
+            , "should keep a reference to the error on the ctx" :
+              function() {
+                  ctx.should.have.property("error");
+                  ctx.error.should.be.an.Error;
+              }
+            , afterAll:
+              function() {
+                  delete ctx.error;
+                  delete step["expect-error"];
+              }
+            }
+          , "and step yields an error different than the expected error" :
+            { beforeAll: 
+              function() {
+                  step.sql = "fail-unexpected";
+                  step["expect-error"] = "wanted error";
+              }
+            , "should yield a friendly error" :
+              function(done) {
+                  fStep(function(e) {
+                      Should.exist(e);
+                      e.message.should.match(/expected .* but got/i);
+                      done()
+                  })
+              }
+            , "should keep a reference to the error on the ctx" :
+              function() {
+                  ctx.should.have.property("error");
+                  ctx.error.should.be.an.Error;
+              }
+            , afterAll:
+              function() {
+                  delete ctx.error;
+                  delete step["expect-error"];
+              }
+            }
+          , "and step yields an error that is expected" :
+            { beforeAll: 
+              function() {
+                  step.sql = "fail-expected";
+                  step["expect-error"] = "wanted error"
+              }
+            , "should not fail" :
+              function(done) {
+                  fStep(function(e) {
+                      Should.not.exist(e);
+                      done()
+                  })
+              }
+            , afterAll: 
+              function() {
+                  delete step["expect-error"];
+              }
+            }
+          , "and step yields recordset that does not match expectations" :
+            { beforeAll: 
+              function() {
+                  step.sql = "result-unexpected";
+              }
+            , "should yield a friendly error" :
+              function(done) {
+                  fStep(function(e) {
+                      Should.exist(e);
+                      yieldedErr = e;
+                      done()
+                  })
+              }
+            , "the yielded error should contain a diff" : 
+              function() {
+                  yieldedErr.message.should
+                    .match(/Results returned by query do not match expected values in CSV/)
+                    .match(/expected is in.*purple/)
+                    .match(/found +is in.*red/)
+              }
+            }
+          , "and step yields recordset that matches csv" :
+            { beforeAll: 
+              function() {
+                  step.sql = "pass normal";
+              }
+            , "should not fail" :
+              function(done) {
+                  fStep(function(e) {
+                      Should.not.exist(e);
+                      done()
+                  })
+              }
+            }
           } 
         }
     })
