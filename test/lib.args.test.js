@@ -160,22 +160,22 @@ module.exports =
           this.slow(200)          
       }          
     }
-  , ".source" : 
-    { "should correspond to swith -s":
+  , ".base" : 
+    { "should correspond to swith -b":
       function(done) {
           var value = "TEST" + Math.random()
-          loadWithArgs("init -d db -s " + value, function(args) {
-              args.should.have.property('source',value);              
-              args.should.have.property('s',value);              
+          loadWithArgs("init -d db -b " + value, function(args) {
+              args.should.have.property('base',value);              
+              args.should.have.property('b',value);              
           }, done);
           this.slow(200)          
       }
-    , "should correspond to swith --source":
+    , "should correspond to swith --base":
       function(done) {
           var value = "TEST" + Math.random()
-          loadWithArgs("init -d db --source " + value, function(args) {
-              args.should.have.property('source',value);              
-              args.should.have.property('s',value);              
+          loadWithArgs("init -d db --base " + value, function(args) {
+              args.should.have.property('base',value);              
+              args.should.have.property('b',value);              
           }, done);
           this.slow(200)          
       } 
