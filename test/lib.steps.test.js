@@ -268,7 +268,7 @@ module.exports =
           }
         }
     })
-  , "when provided with valid 'sql-files' step" : 
+  , "when provided with a valid 'sql-files' step" : 
     block(function() {
         var fStep
           , files = []
@@ -302,6 +302,84 @@ module.exports =
                   f.length.should.eql(1);
                   f.name.should.eql("sql_step");
               })
+          }
+        }
+    })
+  , "when provided with a valid 'load' step" : 
+    block(function() {
+        var fStep
+          , ctx = new Context({})
+          , step = 
+            { "load"   : 
+              { fields: 
+                  [ "id","name","isOK"]
+              , rows: 
+                [ [ 11, "Yak" , true ]
+                , [ 22, "Jack", false ]
+                ]
+              }
+            , "to"         : "testTableName"
+            }
+          ;
+
+        return {
+          "should not fail" : 
+          function() {
+              console.log = function(){};
+              fStep = sut(step, ctx);
+              console.log = clog;
+          }
+        , "should return an async step function" : 
+          function() {
+              Should.exist(fStep);
+              fStep.should.be.a.Function;
+              fStep.name.should.eql("load_step");
+              fStep.length.should.eql(1);
+          }
+        }
+    })
+  , "when provided with a valid 'load-csv' step" : 
+    block(function() {
+        var fStep
+          , files = []
+          , ctx = new Context({})
+          , step = 
+            { "load-csv"   : "some-path.csv"
+            , "to"         : "testTableName"
+            }
+          ;
+
+        ctx.readFileSync = function(file) { files.push(file); return "id,name,isOK\n11,Yak,true\n22,Jack,false" }
+
+        return {
+          "should not fail" : 
+          function() {
+              console.log = function(){};
+              fStep = sut(step, ctx);
+              console.log = clog;
+          }
+        , "should read the file" : 
+          function() {
+              files.should.eql([ "some-path.csv" ]);
+          }
+        , "should parse the file as recordset into step.load" :
+          function() {
+              step.should.have.property("load"
+              , { fields: 
+                  [ "id","name","isOK"]
+                , rows: 
+                  [ [ 11, "Yak" , true ]
+                  , [ 22, "Jack", false ]
+                  ]
+                }
+              )
+          }
+        , "should return an async step function" : 
+          function() {
+              Should.exist(fStep);
+              fStep.should.be.a.Function;
+              fStep.name.should.eql("load_step");
+              fStep.length.should.eql(1);
           }
         }
     })
