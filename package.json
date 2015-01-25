@@ -1,6 +1,6 @@
 {
   "name": "mocha-sql",
-  "version": "0.0.1", 
+  "version": "0.0.1",
   "description": "",
   "main": "lib",
   "bin": {
@@ -15,7 +15,8 @@
     "js-yaml": "~3.2.5",
     "pg": "~4.2.0",
     "async": "~0.9.0",
-    "diff": "~1.2.1"
+    "diff": "~1.2.1",
+    "colors": "~1.0.3"
   },
   "devDependencies": {
     "mocha-ui-exports": "~0.2.2",
