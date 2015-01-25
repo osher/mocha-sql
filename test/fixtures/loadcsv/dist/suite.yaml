@@ -1,0 +1,28 @@
+meta: 
+  title  : minimal
+  base   : ./dist
+#=======================================
+scenario-1 :
+  execution:
+    - title     : create table
+      sql       : 
+        CREATE TABLE testCSV 
+        ( id    integer
+        , name  varchar(32)
+        , date  timestamp 
+        , isOK  bool
+        );
+      #
+    - title     : populate from CSV
+      load-csv  : ./csv/data.csv
+      to        : testCSV
+  validation: 
+    - title     : see 4 records
+      sql       : SELECT * FROM testCSV;
+      1st-row   : field names
+      expect-csv: ./csv/data.csv
+  cleanup:
+    - title     : drop
+      sql       : DROP TABLE testCSV;
+
+ 

@@ -1,0 +1,5 @@
+id,name,date,isOK
+1,Albert,2000-1-25 0:0:0.0,true
+2,Misha,20010-5-21 0:0:0.0,false
+3,Moshe,null,true
+4,Losha,null,null
