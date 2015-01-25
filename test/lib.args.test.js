@@ -182,8 +182,8 @@ module.exports =
     , "should default to '.'" : 
       function(done) {
           loadWithArgs("init -d db", function(args) {
-              args.should.have.property('source','.');
-              args.should.have.property('s','.');              
+              args.should.have.property('base','.');
+              args.should.have.property('b','.');              
           }, done);
           this.slow(200)          
       }      
