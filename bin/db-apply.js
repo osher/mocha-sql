@@ -1,5 +1,7 @@
 var args  = require('../lib/args')
   , fs    = require('fs')
+  , path  = require('path')
+  , cmd   = path.join( args.base, "dist" , args.cmd + ".js")
   , spawn = require('child_process').spawn
   , conf_path = "./db-apply.config.json"
   ;
@@ -11,7 +13,7 @@ function start() {
 }
 
 function assure_cmd() {
-    fs.stat("./dist/" + args.cmd + ".js" , function(e) {
+    fs.stat( cmd , function(e) {
         if (e) return console.log("command not supported: %s\n\n", args.cmd) && process.exit(1);
 
         console.log("applying command : ", args.cmd );
@@ -22,18 +24,19 @@ function assure_cmd() {
 function run_mocha(e) {
     if (e) return console.log(e) && process.exit(1);
     var switches = (
-          [ "dist/" + args.cmd + ".js"
+          [ cmd
           , "--ui"       , "mocha-ui-exports"
           , "--reporter" , "spec"
           , "--slow"     , 3000
           , "--timeout"  , 6000
-          , "--bail"
+          , "--bail"     , ""
 
+          , "--base"     , args.b
           , "--host"     , args.h
           , "--port"     , args.p 
           ]
         )
-      , cmd = 
+      , mocha = 
         process.platform[0] == "w" //win32|win64|win...
         ? ".\\node_modules\\.bin\\mocha.cmd"
         : "mocha"
@@ -44,10 +47,10 @@ function run_mocha(e) {
     if (args.d) switches.push("--database", args.d);
 
     console.log("executing...\n=========================================");
-    console.log("%s %s", cmd.trim(), switches[0], switches.slice(1).map(function(w) { return (w + "                 ").substr(0,18) }).join("").replace(/--/g, "\\\n\t--"));
+    console.log("%s %s", mocha, switches[0], switches.slice(1).map(function(w) { return (w + "                  ").substr(0,18) }).join("").replace(/--/g, "\\\n\t--"));
     console.log("=========================================");
 
-    f = spawn(cmd, switches, { customFds: [0,1,2] });
+    f = spawn(mocha, switches, { customFds: [0,1,2],  });
     //f.stdout.on('data', echo);
     //f.stderr.on('data', echo);
     f.on('close', end );
