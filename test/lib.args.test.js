@@ -1,7 +1,6 @@
 var fs    = require('fs')
   , path  = require('path')
   , spawn = require('child_process').spawn
-  , code  = fs.readFileSync( path.join(__dirname, "..","lib","args.js"))
   ;
 
 module.exports = 
@@ -107,7 +106,23 @@ module.exports =
               args.should.have.property('h',value);              
           }, done);
           this.slow(200)          
-      }    
+      }
+    , "when env.PGHOST is defined - should default to PGHOST" :
+      function(done) {
+          loadWithArgs("init -d db", function(args) {
+              args.should.have.property('host','myhost');              
+              args.should.have.property('h','myhost');              
+          }, { PGHOST : 'myhost'}, done);
+          this.slow(200)          
+      }
+    , "should default to 'localhost'" :
+      function(done) {
+          loadWithArgs("init -d db", function(args) {
+              args.should.have.property('host','localhost');              
+              args.should.have.property('h','localhost');              
+          }, {}, done);
+          this.slow(200)          
+      }
     }
   , ".port" : 
     { "should correspond to swith -p":
@@ -127,7 +142,51 @@ module.exports =
               args.should.have.property('p',value);              
           }, done);
           this.slow(200)          
-      }    
+      }
+    , "when env.PGPORT is defined - should default to PGPORT" :
+      function(done) {
+          loadWithArgs("init -d db", function(args) {
+              args.should.have.property('port',8855);              
+              args.should.have.property('p',8855);              
+          }, { PGPORT : 8855}, done);
+          this.slow(200)          
+      }
+    , "should default to 5432" :
+      function(done) {
+          loadWithArgs("init -d db", function(args) {
+              args.should.have.property('port',5432);              
+              args.should.have.property('p',5432);              
+          }, {}, done);
+          this.slow(200)          
+      }          
+    }
+  , ".source" : 
+    { "should correspond to swith -s":
+      function(done) {
+          var value = "TEST" + Math.random()
+          loadWithArgs("init -d db -s " + value, function(args) {
+              args.should.have.property('source',value);              
+              args.should.have.property('s',value);              
+          }, done);
+          this.slow(200)          
+      }
+    , "should correspond to swith --source":
+      function(done) {
+          var value = "TEST" + Math.random()
+          loadWithArgs("init -d db --source " + value, function(args) {
+              args.should.have.property('source',value);              
+              args.should.have.property('s',value);              
+          }, done);
+          this.slow(200)          
+      } 
+    , "should default to '.'" : 
+      function(done) {
+          loadWithArgs("init -d db", function(args) {
+              args.should.have.property('source','.');
+              args.should.have.property('s','.');              
+          }, done);
+          this.slow(200)          
+      }      
     }
   , ".help" : 
     { "should correspond to swith -h":
@@ -148,9 +207,13 @@ module.exports =
   }
 }
 
-function loadWithArgs(args, cb, done) {
+function loadWithArgs(args, cb, env, done) {
+    if (typeof env == 'function') {
+        done = env;
+        env = null;
+    }
 
-    var bin = spawn("node", ["./test/cli-context/args.js"].concat(args.split(" ")));
+    var bin = spawn("node", ["./test/cli-context/args.js"].concat(args.split(" ")), env ? { env: env } : null);
 
     bin.stderr.on('data', function(buf) {
         cb( { err: buf+""} )
