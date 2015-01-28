@@ -109,13 +109,13 @@ module.exports =
                       done()
                   })
               }
-            , "should keep a reference to the error on the ctx" :
+            , "should add the error to the ctx" :
               function() {
-                  ctx.should.have.property("error", unexpectedErr);
+                  ctx.errors.should.include(unexpectedErr);
               }
             , afterAll: 
               function() {
-                  delete ctx.error;
+                  ctx.errors = [];
               }
             }
           , "and step yields no error when an error is expected" : 
@@ -132,14 +132,14 @@ module.exports =
                       done()
                   })
               }
-            , "should keep a reference to the error on the ctx" :
+            , "should add the error to the ctx" :
               function() {
-                  ctx.should.have.property("error");
-                  ctx.error.should.be.an.Error;
+                  ctx.errors.length.should.eql(1);
+                  ctx.errors[0].should.be.an.Error;
               }
             , afterAll:
               function() {
-                  delete ctx.error;
+                  ctx.errors = [];
                   delete step["expect-error"];
               }
             }
@@ -157,14 +157,14 @@ module.exports =
                       done()
                   })
               }
-            , "should keep a reference to the error on the ctx" :
+            , "should add the error to the ctx" :
               function() {
-                  ctx.should.have.property("error");
-                  ctx.error.should.be.an.Error;
+                  ctx.errors.length.should.eql(1);
+                  ctx.errors[0].should.be.an.Error;
               }
             , afterAll:
               function() {
-                  delete ctx.error;
+                  ctx.errors = [];
                   delete step["expect-error"];
               }
             }
@@ -176,10 +176,7 @@ module.exports =
               }
             , "should not fail" :
               function(done) {
-                  fStep(function(e) {
-                      Should.not.exist(e);
-                      done()
-                  })
+                  fStep(done)
               }
             , afterAll: 
               function() {
